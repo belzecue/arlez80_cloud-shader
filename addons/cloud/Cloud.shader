@@ -10,8 +10,8 @@ const float noise_scale = 0.00005;
 uniform float seed = -1000.0;
 uniform vec2 speed = vec2( 2.0, 0.0 );
 uniform vec2 transform_speed = vec2( 0.0, 0.0001 );
-uniform float min_level = 0.46;
-uniform float max_level = 6.0;
+uniform float min_density = 0.46;
+uniform float max_density = 6.0;
 uniform float altitude = 2000.0;
 uniform vec4 color : hint_color = vec4( 1.0, 1.0, 1.0, 1.0 );
 uniform bool detail_noise = false;
@@ -68,7 +68,7 @@ void fragment( )
 		) * ( detail_noise ? 1.0 : 0.45 )
 	) / 47.0;
 
-	ALPHA = min( sin_theta * 8.0, 1.0 ) * clamp( ( h - min_level ) * ( max_level - min_level ), 0.0, 1.0 );
+	ALPHA = min( sin_theta * 8.0, 1.0 ) * clamp( ( h - min_density ) * ( max_density - min_density ), 0.0, 1.0 );
 	ALBEDO = color.rgb;
 	DEPTH = 1.0;
 }

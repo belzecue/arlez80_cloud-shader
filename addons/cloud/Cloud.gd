@@ -16,10 +16,10 @@ export(Vector2) var cloud_transform_speed:Vector2 = Vector2( 0.0, 0.00001 ) setg
 export(float) var cloud_thickness:float = 156.0 setget _set_cloud_thickness
 export(float) var cloud_altitude:float = 2000.0 setget _set_cloud_altitude
 
-export(float) var cloud_min_level_low:float = 0.48 setget _set_cloud_min_level_low
-export(float) var cloud_min_level_high:float = 0.6 setget _set_cloud_min_level_high
-export(float) var cloud_max_level_low:float = 12.0 setget _set_cloud_max_level_low
-export(float) var cloud_max_level_high:float = 6.0 setget _set_cloud_max_level_high
+export(float) var cloud_min_density_low:float = 0.48 setget _set_cloud_min_density_low
+export(float) var cloud_min_density_high:float = 0.6 setget _set_cloud_min_density_high
+export(float) var cloud_max_density_low:float = 12.0 setget _set_cloud_max_density_low
+export(float) var cloud_max_density_high:float = 6.0 setget _set_cloud_max_density_high
 
 export(bool) var auto_follow_camera:bool = true
 
@@ -56,25 +56,25 @@ func _set_cloud_altitude( _cloud_altitude:float ) -> float:
 	self._regen_mesh( )
 	return cloud_altitude
 
-func _set_cloud_min_level_low( _cloud_min_level_low:float ) -> float:
-	cloud_min_level_low = _cloud_min_level_low
+func _set_cloud_min_density_low( _cloud_min_density_low:float ) -> float:
+	cloud_min_density_low = _cloud_min_density_low
 	self._regen_mesh( )
-	return cloud_min_level_low
+	return cloud_min_density_low
 
-func _set_cloud_min_level_high( _cloud_min_level_high:float ) -> float:
-	cloud_min_level_high = _cloud_min_level_high
+func _set_cloud_min_density_high( _cloud_min_density_high:float ) -> float:
+	cloud_min_density_high = _cloud_min_density_high
 	self._regen_mesh( )
-	return cloud_min_level_high
+	return cloud_min_density_high
 
-func _set_cloud_max_level_low( _cloud_max_level_low:float ) -> float:
-	cloud_max_level_low = _cloud_max_level_low
+func _set_cloud_max_density_low( _cloud_max_density_low:float ) -> float:
+	cloud_max_density_low = _cloud_max_density_low
 	self._regen_mesh( )
-	return cloud_max_level_low
+	return cloud_max_density_low
 
-func _set_cloud_max_level_high( _cloud_max_level_high:float ) -> float:
-	cloud_max_level_high = _cloud_max_level_high
+func _set_cloud_max_density_high( _cloud_max_density_high:float ) -> float:
+	cloud_max_density_high = _cloud_max_density_high
 	self._regen_mesh( )
-	return cloud_max_level_high
+	return cloud_max_density_high
 
 func _regen_mesh( ):
 	self.mesh = preload( "CageMesh.tres" )
@@ -95,8 +95,8 @@ func _regen_mesh( ):
 		cs.set_shader_param( "color", self.cloud_color * color_s + self.shade_color * color_t )
 		cs.set_shader_param( "speed", self.cloud_speed )
 		cs.set_shader_param( "transform_speed", self.cloud_transform_speed )
-		cs.set_shader_param( "min_level", lerp( self.cloud_min_level_low, self.cloud_min_level_high, sin_t ) )
-		cs.set_shader_param( "max_level", lerp( self.cloud_max_level_low, self.cloud_max_level_high, sin_t ) )
+		cs.set_shader_param( "min_density", lerp( self.cloud_min_density_low, self.cloud_min_density_high, sin_t ) )
+		cs.set_shader_param( "max_density", lerp( self.cloud_max_density_low, self.cloud_max_density_high, sin_t ) )
 		cs.set_shader_param( "altitude", self.cloud_altitude + lerp( self.cloud_thickness, 0.0, t ) )
 		cs.set_shader_param( "detail_noise", ( self.draw_count * 3 / 4 ) < i )
 		cs.render_priority = Material.RENDER_PRIORITY_MIN + i
