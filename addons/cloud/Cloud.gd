@@ -21,6 +21,8 @@ export(float) var cloud_min_level_high:float = 0.6 setget _set_cloud_min_level_h
 export(float) var cloud_max_level_low:float = 12.0 setget _set_cloud_max_level_low
 export(float) var cloud_max_level_high:float = 6.0 setget _set_cloud_max_level_high
 
+export(bool) var auto_follow_camera:bool = true
+
 func _ready( ):
 	self._regen_mesh( )
 
@@ -112,6 +114,9 @@ func _physics_process( delta:float ):
 	self._move_to_camera( )
 
 func _move_to_camera( ):
+	if not self.auto_follow_camera:
+		return
+
 	var camera:Camera = self.get_viewport( ).get_camera( )
 	if camera == null:
 		return
