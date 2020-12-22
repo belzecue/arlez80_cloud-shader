@@ -22,6 +22,7 @@ export(float) var cloud_max_density_low:float = 12.0 setget _set_cloud_max_densi
 export(float) var cloud_max_density_high:float = 6.0 setget _set_cloud_max_density_high
 
 export(bool) var auto_follow_camera:bool = true
+export(float) var auto_follow_camera_append_height:float = 0.0
 
 func _ready( ):
 	self._regen_mesh( )
@@ -124,7 +125,7 @@ func _move_to_camera( ):
 	var middle:float = ( camera.far + camera.near ) / 2.0
 	var middle_size:Vector3 = Vector3.ONE * middle
 
-	self.transform.origin = camera.global_transform.origin
+	self.transform.origin = camera.global_transform.origin + Vector3( 0.0, self.auto_follow_camera_append_height, 0.0 )
 	self.transform.basis.x = Vector3( middle, 0.0, 0.0 )
 	self.transform.basis.y = Vector3( 0.0, middle, 0.0 )
 	self.transform.basis.z = Vector3( 0.0, 0.0, middle )
