@@ -22,7 +22,7 @@ export(float) var cloud_max_density_low:float = 12.0 setget _set_cloud_max_densi
 export(float) var cloud_max_density_high:float = 6.0 setget _set_cloud_max_density_high
 
 export(bool) var cloud_upper_enabled:bool = true setget _set_cloud_upper_enabled
-export(bool) var cloud_lower_enabled:bool = true setget _set_cloud_lower_enabled
+export(bool) var cloud_lower_enabled:bool = false setget _set_cloud_lower_enabled
 
 export(bool) var auto_follow_camera:bool = true
 export(float) var auto_follow_camera_append_height:float = 0.0
