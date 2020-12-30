@@ -16,6 +16,9 @@ uniform float altitude = 2000.0;
 uniform vec4 color : hint_color = vec4( 1.0, 1.0, 1.0, 1.0 );
 uniform bool detail_noise = false;
 
+uniform bool upper_enabled = true;
+uniform bool lower_enabled = false;
+
 float random( vec2 pos )
 { 
 	return fract(sin(dot(pos, vec2(12.9898,78.233))) * 43758.5453);
@@ -44,7 +47,7 @@ void fragment( )
 
 	// 描画したい空にある雲の点Pの位置を出す
 	float sin_theta = v.y;
-	if( sin_theta < 0.0 ) discard;
+	if( ( 0.0 < sin_theta && ( ! upper_enabled ) ) || ( sin_theta < 0.0 && ( ! lower_enabled ) ) ) discard;
 	float distance_to_p = altitude / sin_theta;
 	vec3 p = camera_pos + v * distance_to_p;
 
@@ -68,7 +71,7 @@ void fragment( )
 		) * ( detail_noise ? 1.0 : 0.45 )
 	) / 47.0;
 
-	ALPHA = min( sin_theta * 8.0, 1.0 ) * clamp( ( h - min_density ) * ( max_density - min_density ), 0.0, 1.0 );
+	ALPHA = min( abs( sin_theta ) * 8.0, 1.0 ) * clamp( ( h - min_density ) * ( max_density - min_density ), 0.0, 1.0 );
 	ALBEDO = color.rgb;
 	DEPTH = 1.0;
 }

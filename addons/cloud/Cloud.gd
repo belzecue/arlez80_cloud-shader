@@ -21,8 +21,13 @@ export(float) var cloud_min_density_high:float = 0.6 setget _set_cloud_min_densi
 export(float) var cloud_max_density_low:float = 12.0 setget _set_cloud_max_density_low
 export(float) var cloud_max_density_high:float = 6.0 setget _set_cloud_max_density_high
 
+export(bool) var cloud_upper_enabled:bool = true setget _set_cloud_upper_enabled
+export(bool) var cloud_lower_enabled:bool = true setget _set_cloud_lower_enabled
+
 export(bool) var auto_follow_camera:bool = true
 export(float) var auto_follow_camera_append_height:float = 0.0
+
+var mesh_inverse:bool = false
 
 func _ready( ):
 	self._regen_mesh( )
@@ -77,8 +82,30 @@ func _set_cloud_max_density_high( _cloud_max_density_high:float ) -> float:
 	self._regen_mesh( )
 	return cloud_max_density_high
 
+func _set_cloud_upper_enabled( _cloud_upper_enabled:bool ) -> bool:
+	cloud_upper_enabled = _cloud_upper_enabled
+	self._regen_mesh( )
+	return cloud_upper_enabled
+
+func _set_cloud_lower_enabled( _cloud_lower_enabled:bool ) -> bool:
+	cloud_lower_enabled = _cloud_lower_enabled
+	self._regen_mesh( )
+	return cloud_lower_enabled
+
 func _regen_mesh( ):
-	self.mesh = preload( "CageMesh.tres" )
+	self.mesh_inverse = false
+	if self.cloud_upper_enabled and self.cloud_lower_enabled:
+		self.mesh = CubeMesh.new( )
+		self.mesh.flip_faces = true
+	elif self.cloud_upper_enabled:
+		self.mesh = preload( "CageMesh.tres" )
+	elif self.cloud_lower_enabled:
+		self.mesh = preload( "CageMesh.tres" )
+		self.mesh_inverse = true
+	else:
+		# なし
+		self.mesh = null
+		return
 
 	var cloud_shader:ShaderMaterial = preload( "CloudMat.tres" )
 	var currently_shader:ShaderMaterial = null
@@ -100,6 +127,8 @@ func _regen_mesh( ):
 		cs.set_shader_param( "max_density", lerp( self.cloud_max_density_low, self.cloud_max_density_high, sin_t ) )
 		cs.set_shader_param( "altitude", self.cloud_altitude + lerp( self.cloud_thickness, 0.0, t ) )
 		cs.set_shader_param( "detail_noise", ( self.draw_count * 3 / 4 ) < i )
+		cs.set_shader_param( "upper_enabled", self.cloud_upper_enabled )
+		cs.set_shader_param( "lower_enabled", self.cloud_lower_enabled )
 		cs.render_priority = Material.RENDER_PRIORITY_MIN + i
 
 		if currently_shader == null:
@@ -124,8 +153,9 @@ func _move_to_camera( ):
 
 	var middle:float = ( camera.far + camera.near ) / 2.0
 	var middle_size:Vector3 = Vector3.ONE * middle
+	var middle_y:float = -middle if self.mesh_inverse else middle
 
 	self.transform.origin = camera.global_transform.origin + Vector3( 0.0, self.auto_follow_camera_append_height, 0.0 )
 	self.transform.basis.x = Vector3( middle, 0.0, 0.0 )
-	self.transform.basis.y = Vector3( 0.0, middle, 0.0 )
+	self.transform.basis.y = Vector3( 0.0, middle_y, 0.0 )
 	self.transform.basis.z = Vector3( 0.0, 0.0, middle )
